@@ -1,0 +1,50 @@
+load("@fbcode_macros//build_defs:python_binary.bzl", "python_binary")
+load("@fbcode_macros//build_defs:python_library.bzl", "python_library")
+load("//tools/xar:defs.bzl", "xar_python_binary")
+
+python_library(
+    name = "train_net",
+    srcs = ["train_net.py"],
+    base_module = "",
+    py_version = ">=3.6",
+    deps = [
+        "fbsource//third-party/pypi/numpy:numpy",
+        "//caffe2:torch",
+        "//vision/fair/fvcore/fvcore:fvcore",
+        "//vision/fair/memvit/memvit:lib",
+    ],
+)
+
+python_library(
+    name = "test_net",
+    srcs = ["test_net.py"],
+    base_module = "",
+    py_version = ">=3.6",
+    deps = [
+        "fbsource//third-party/pypi/numpy:numpy",
+        "//caffe2:torch",
+        "//fair_infra/data/iopath/iopath:core",
+        "//vision/fair/memvit/memvit:lib",
+    ],
+)
+
+python_binary(
+    name = "run_net_bin",
+    srcs = ["run_net.py"],
+    base_module = "",
+    compile = "with-source",
+    main_module = "run_net",
+    par_style = "xar",
+    py_version = ">=3.6",
+    deps = [
+        "//vision/fair/memvit/memvit:lib",
+        "//vision/fair/memvit/tools:test_net",
+        "//vision/fair/memvit/tools:train_net",
+    ],
+)
+
+xar_python_binary(
+    name = "run_net_xar",
+    output_name = "run_net.xar",
+    src_rule_name = ":run_net_bin",
+)

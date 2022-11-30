@@ -1,0 +1,16 @@
+load("@fbcode_macros//build_defs:python_library.bzl", "python_library")
+
+python_library(
+    name = "ava_evaluation",
+    srcs = glob(
+        [
+            "*.py",
+            "**/*.py",
+        ],
+    ),
+    base_module = "memvit",
+    py_version = ">=3",
+    deps = [
+        "fbsource//third-party/pypi/numpy:numpy",
+    ],
+)

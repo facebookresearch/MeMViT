@@ -1,0 +1,92 @@
+# @noautodeps
+
+load("@fbcode_macros//build_defs:python_library.bzl", "python_library")
+
+python_library(
+    name = "fb_nas_overrides",
+    srcs = {
+        "config/fb/custom_config.py": "config/custom_config.py",
+        "datasets/fb/utils.py": "datasets/utils.py",
+        "models/fb/custom_video_model_builder.py": "models/custom_video_model_builder.py",
+        "visualization/fb/tensorboard_vis.py": "visualization/tensorboard_vis.py",
+    },
+    base_module = "memvit",
+    py_version = ">=3.6",
+    visibility = [
+        "//vision/fair/memvit/...",
+    ],
+    deps = [
+        "//on_device_ai/ARNet/experimental:common",
+        "//on_device_ai/ARNet/experimental:models",
+        "//on_device_ai/Video_Understanding:video_understanding",
+    ],
+)
+
+python_library(
+    name = "fb_overrides",
+    srcs = {
+        # remap the file name.
+        "datasets/fb/__init__.py": "datasets/__init__.py",
+        "datasets/fb/prefetch_datasets.py": "datasets/prefetch_datasets.py",
+        "datasets/fb/video_container.py": "datasets/video_container.py",
+        "utils/fb/env.py": "utils/env.py",
+    },
+    base_module = "memvit",
+    py_version = ">=3.6",
+    visibility = [
+        "//vision/fair/memvit/...",
+    ],
+)
+
+python_library(
+    name = "lib",
+    srcs = glob(
+        [
+            "**/*.py",
+            "**/**/*.py",
+        ],
+        exclude = [
+            "datasets/fb/video_container.py",
+            "datasets/video_container.py",
+            "datasets/fb/utils.py",
+            "datasets/utils.py",
+            "datasets/fb/__init__.py",
+            "datasets/__init__.py",
+            "datasets/fb/prefetch_datasets.py",
+            "utils/fb/env.py",
+            "utils/env.py",
+            "config/fb/custom_config.py",
+            "config/custom_config.py",
+            "models/fb/custom_video_model_builder.py",
+            "models/custom_video_model_builder.py",
+            "visualization/fb/tensorboard_vis.py",
+            "visualization/tensorboard_vis.py",
+        ],
+    ),
+    base_module = "memvit",
+    deps = [
+        ":fb_nas_overrides",
+        ":fb_overrides",
+        "//caffe2:torch",
+        "//caffe2/torch/fb/rendezvous:zeus",
+        "//fair_infra/data/iopath/iopath:iopath",
+        "//fair_infra/data/prefetcher:prefetcher",
+        "//fblearner/flow/facebook:flow_fb_lib",
+        "//github/facebookresearch/fairscale:fairscale",
+        "//python/wheel/av:av",
+        "//python/wheel/moviepy:moviepy",
+        "//ti/urlgen:everstore_url_py",
+        "//vision/fair/detectron2/detectron2:detectron2",
+        "//vision/fair/fvcore/fvcore:fvcore",
+        "//vision/fair/pytorchvideo/pytorchvideo:pytorchvideo",
+    ],
+    external_deps = [
+        "PyYAML",
+        "matplotlib",
+        "numpy",
+        "opencv3",
+        "simplejson",
+        ("pycurl", None),
+        "scikit-learn",
+    ],
+)
